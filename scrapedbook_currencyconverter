@@ -1,1 +1,71 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+# -------------------------------
+# Step 1: Scrape product data
+# -------------------------------
+def scrape_books(url="https://books.toscrape.com/"):
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching page: {e}")
+        return []
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    books = []
+
+    # Collect first 10 products
+    for product in soup.select(".product_pod")[:10]:
+        title = product.h3.a["title"]
+        price = product.select_one(".price_color").text.strip()
+        # Remove currency symbol (£) and convert to float
+        price_value = float(price.replace("£", ""))
+        books.append({"title": title, "price_gbp": price_value})
+
+    return books
+
+
+# -------------------------------
+# Step 2: Currency conversion
+# -------------------------------
+def convert_currency(amount, from_currency="GBP", to_currency="KES"):
+    api_url = f"https://open.er-api.com/v6/latest/{from_currency}"
+    try:
+        response = requests.get(api_url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        rate = data["rates"].get(to_currency)
+        if rate:
+            return round(amount * rate, 2)
+        else:
+            print(f"Conversion rate for {to_currency} not found.")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching exchange rate: {e}")
+        return None
+
+
+# -------------------------------
+# Step 3: Process and save data
+# -------------------------------
+def main():
+    books = scrape_books()
+    if not books:
+        return
+
+    for book in books:
+        book["price_kes"] = convert_currency(book["price_gbp"], "GBP", "KES")
+
+    # Save to CSV
+    df = pd.DataFrame(books)
+    df.to_csv("books_prices.csv", index=False)
+
+    # Display table in terminal
+    print(df.to_markdown(index=False))
+
+
+if __name__ == "__main__":
+    main()
 
