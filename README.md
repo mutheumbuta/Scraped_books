@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-The Price Scraper + Currency Converter is a Python data project that extracts product prices from an e-commerce website and converts them into different currencies.
+The Price Scraper and Currency Converter is a Python data project that extracts product prices from an e-commerce website and converts them into different currencies.
 
 The project demonstrates practical skills in web scraping, API integration, data processing, and data storage. It simulates how businesses monitor product pricing and convert prices for international markets.
 
@@ -10,26 +10,30 @@ The scraper collects product titles and prices, converts the prices into another
 
 ## Project Objectives
 
-Scrape product information from an online store
+Scrape product names and prices from Books to Scrape .
 
-Extract and clean product titles and prices
+Clean and store product titles and prices in original currency.
 
-Convert prices between currencies
+Convert prices into another currency using Exchangerate API.
 
-Display results in a readable table format
+Save results into CSV or JSON format.
 
-Save the processed data into files for further analysis
+Display converted prices in a readable table using pandas.
+
+Error handling for connection issues and missing conversion rates.
+
+Optional: User can select source and target currencies.
 
 ## Technologies Used
 Python
 
-Requests
+Requests  for HTTP requests
+
+Exchangerate API 
 
 BeautifulSoup
 
 Pandas
-
-Tabulate
 
 ## Data Source
 
